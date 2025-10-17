@@ -1,0 +1,309 @@
+// Match all documents with category = "Electronics"
+
+[
+  {
+    $match: {category: "Electronics"}
+  }
+  ,
+  {
+    $match: {
+      price:{$gt: 100}
+    }
+  }
+  ,
+  {
+    $match: {
+      price:{$gt: 50, $lt:1000}
+    }
+  }
+]
+
+
+// Match where category is either "Fashion" or "Accessories".
+
+[
+  {
+    $match: {
+      $or: [
+        { category: { $eq: "Fashion" } },
+        { category: { $eq: "Accessories" } }
+      ]
+    }
+  }
+]
+
+You computed something in $group and want to merge it back to the main collection
+
+db.products.aggregate([
+  {
+    $group: {
+      _id: "$category",
+      avg_price: { $avg: "$price" }
+    }
+  },
+  {
+    $lookup: {
+      from: "products",
+      localField: "_id",
+      foreignField: "category",
+      as: "products"
+    }
+  },
+  {
+    $unwind: "$products"
+  },
+  {
+    $addFields: {
+      "products.avg_price_for_category": "$avg_price"
+    }
+  },
+  {
+    $replaceRoot: { newRoot: "$products" }
+  }
+])
+
+You want to compute totals across all docs and attach back to each doc
+
+db.products.aggregate([
+  {
+    $group: {
+      _id: null,
+      total_price: { $sum: "$price" },
+      avg_price: { $avg: "$price" }
+    }
+  },
+  {
+    $lookup: {
+      from: "products",
+      pipeline: [],
+      as: "products"
+    }
+  },
+  {
+    $unwind: "$products"
+  },
+  {
+    $addFields: {
+      "products.total_price": "$total_price",
+      "products.avg_price": "$avg_price"
+    }
+  },
+  {
+    $replaceRoot: { newRoot: "$products" }
+  }
+])
+
+
+// Match where category is not null or missing.
+
+// Match where inStock is true and price < 100.
+
+
+
+[
+  {
+    $group: {
+      _id: '$region',
+      total_sales: {
+        $sum: "$sales"
+      },
+      avg_sales: {
+        $avg: "$sales"
+      }
+    }
+  }
+]
+
+
+
+[
+  {
+    $group: {
+      _id: "$region",
+      total_sales: {
+        $sum: "$sales"
+      },
+      avg_sales: {
+        $avg: "$sales"
+      },
+      max_sales: {
+        $max: "$sales"
+      },
+      count_entries: { $sum: 1 },
+    }
+  }
+]
+
+// Group by region and find total sales ($sum).
+
+// Group by region and find average sales ($avg).
+
+// Find max sales per region.
+
+// Find min sales per region.
+
+// Count number of entries per region.
+
+[
+  {
+    $group: {
+      _id: "$region",
+      all_sales: {$push:"$sales"}
+  }
+  }
+]
+
+
+
+// Create array of all sales per region using $push.
+
+[
+  {
+    $group: {
+      _id: "$region",
+      sales_arr: { $addToSet: {salesarr:"$sales"} }
+    }
+  }
+]
+// Create unique sales list per region using $addToSet.
+
+[
+  {
+    $lookup: {
+      from: "users",          // collection to join
+      localField: "userId",   // field from the current collection (orders)
+      foreignField: "_id",    // field from the 'users' collection
+      as: "orders_by_users"   // output array field name
+    }
+  }
+]
+
+// Join users with orders on userId.
+
+[
+  {
+    $unwind:'$subjects'
+  }
+]
+
+
+// $unwind subjects to create one doc per subject.
+
+
+[
+  {
+    $unwind:"$subjects"
+  },
+  {
+    $count: "subjects"
+  }
+]
+
+// Count total number of subject entries.
+
+
+how to combine $unwind → $group → $addFields
+
+
+[
+  // Step 1️⃣ — Unwind the subjects array
+  {
+    $unwind: {
+      path: "$subjects",
+      preserveNullAndEmptyArrays: true // keeps students with no subjects
+    }
+  },
+
+  // Step 2️⃣ — Group back to reconstruct subjects per student
+  {
+    $group: {
+      _id: "$_id",
+      name: { $first: "$name" },
+      subjects: { $addToSet: "$subjects" } // or $push if you want duplicates
+    }
+  },
+
+  // Step 3️⃣ — Add derived fields like total subject count
+  {
+    $addFields: {
+      totalSubjects: { $size: "$subjects" }
+    }
+  },
+
+  // Step 4️⃣ — (Optional) Sort by student name or totalSubjects
+  {
+    $sort: { totalSubjects: -1 }
+  }
+]
+
+
+[
+  {
+    $unwind: {
+      path: "$subjects",
+      preserveNullAndEmptyArrays: true
+    }
+  },
+  {
+    $match: {
+      "subjects" : {$eq: "Math"}
+    }
+  }
+]
+// After unwind, match only “Math” subjects.
+[
+  {
+    $unwind: {
+      path: "$subjects",
+      preserveNullAndEmptyArrays: true
+    }
+  },
+  {
+    $group: {
+      _id: '$subjects',
+      count_subject: {
+        $count: {}
+      }
+    }
+  }
+]
+
+// Combine $unwind + $group to count how many take each subject.
+
+
+
+
+[
+  {
+
+    $unwind: {
+      path: "$subjects",
+      includeArrayIndex: 'idx',
+      preserveNullAndEmptyArrays: true
+    },
+    
+    
+  },
+
+  {
+    $addFields: {
+      isCore: {
+        $in:["$subjects", ["Math", "Science"]]
+      }
+    }
+
+  },    
+
+  {
+      $sort: {
+        subjects: 1
+      }
+    }
+]
+
+// Add subjectIndex using $unwind: { path: "$subjects", includeArrayIndex: "idx" }.
+
+// Compute “isCore” field if subject = “Math” or “Science”.
+
+// Sort subjects alphabetically after unwind.
+https://chatgpt.com/c/68ef8b0f-5d44-8321-9a5d-381d07b0eab0

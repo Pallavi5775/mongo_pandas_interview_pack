@@ -1,0 +1,119 @@
+[
+  {
+    $project: {
+      addPriceVol: {
+        $multiply: ["$price", "$volume"]
+      }
+    }
+  }
+]
+
+Valid for $add, $subtract,$divide,$mod
+
+
+[
+  {
+    $project: {
+      string_project :{
+        $toString: ['$volume']
+      }
+    }
+  }
+]
+
+typecasting also valid for $toInt, $toDate
+
+
+[
+  {
+    $project: {
+      concatinated_str:{
+        $concat:["$symbol" , "-" , {$toString:["$volume"]}]
+      }
+    }
+  }
+]
+
+$concat and typecasting together
+
+
+[
+  {
+    $project: {
+      concatinated_str:{
+        $concat:[
+          {
+            $toLower:"$symbol"
+          } , 
+          "-" , 
+          {
+            $toString:[
+              {
+                $toUpper:"$symbol"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]
+https://chatgpt.com/c/68ef8b0f-5d44-8321-9a5d-381d07b0eab0
+
+ {
+    $project: {
+      splitted_array: {
+        $split: ["$concatinated_str", "-"]
+      }
+    }
+  },
+split is just like add
+
+
+[
+  {
+    $project: {
+      concatinated_str: {
+        $concat: [
+          {
+            $toLower: "$symbol"
+          },
+          "-",
+          {
+            $toString: [
+              {
+                $toUpper: "$symbol"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    $project: {
+      concatinated_str: 1,
+      new_concatination: {
+        $replaceAll: {
+          input: "$concatinated_str",
+          find: "-",
+          replacement: "*********"
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      concatinated_str: 1,
+      new_concatination: 1,
+      splitted_parts: {
+        $split: ["$concatinated_str", "-"]
+      }
+    }
+  }
+]
+
+spliiting conacting using derived variables
+
+
+$group and accumulators

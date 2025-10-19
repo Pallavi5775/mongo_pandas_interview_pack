@@ -105,12 +105,170 @@ print("New Indexed DF", df)
 
 ############################################## EXPLORING THE DATAFRAME ##########################################################
 #seeing all the properties on the dataframe object
-print(dir(df))
+# print(dir(df))
 #see properties which are callable
 callable_props = [prop for prop in dir(df) if not prop.startswith('_') and callable(getattr(df, prop))]
-print(callable_props)
+# print(callable_props)
 
 non_callable_props = [prop for prop in dir(df) if not prop.startswith('_') and not callable(getattr(df, prop))]
-print(non_callable_props)
+# print(non_callable_props)
 # print(df.loc['Laptop'])
+
+####################################################################################################################
+# item : label
+# Label of column to be popped.
+print(df.pop(item='_id'))
+
+print("**********************")
+print(df.values) #Return a Numpy representation of the DataFrame.
+print("**********************")
+# subset : label or list of labels, optional
+# Columns to use when counting unique combinations.
+print(df.value_counts()) #Return a Series containing counts of unique rows in the DataFrame.
+print("**********************")
+print(df.value_counts(subset=["category",'price'])) #subset means columns
+print("**********************")
+# Modify in place using non-NA values from another DataFrame.
+# Aligns on indices. There is no return value.
+
+# Should have at least one matching index/column label with the original DataFrame. 
+# If a Series is passed, its name attribute must be set, 
+# and that will be used as the column name to align with the original DataFrame.
+# print(df.update)
+
+
+print("**********************")
+print("**********************")
+print(df.transpose())
+
+print("**********************")
+print("**********************")
+# print(df.unstack)
+
+print("**********************")
+print("**********************")
+# Convert DataFrame to a NumPy record array.
+# Index will be included as the first field of the record array if requested.
+print(df.to_records())
+
+print("**********************")
+print("**********************")
+# print(df.agg)
+
+
+
+print("**********************")
+print("**********************")
+# Objects passed to the function are Series objects 
+# whose index is either the DataFrame's index (axis=0) '
+# 'or the DataFrame's columns (axis=1). By default (result_type=None),
+# the final return type is inferred from the return type of the applied function. 
+# Otherwise, it depends on the result_type argument.
+
+
+
+# func : function
+# Function to apply to each column or row.
+
+# axis : {0 or 'index', 1 or 'columns'}, default 0
+# Axis along which the function is applied:
+
+# 0 or 'index': apply function to each column.
+# 1 or 'columns': apply function to each row.
+# raw : bool, default False
+# Determines if row or column is passed as a Series or ndarray object:
+# False ⁠:⁠ passes each row or column as a Series to the function.
+# True ⁠:⁠ the passed function will receive ndarray objects instead. If you are just applying a NumPy reduction function this will achieve much better performance.
+# result_type : {'expand', 'reduce', 'broadcast', None}, default None
+# These only act when axis=1 (columns):
+# 'expand' ⁠:⁠ list-like results will be turned into columns.
+# 'reduce' ⁠:⁠ returns a Series if possible rather than expanding list-like results. 
+# This is the opposite of 'expand'.
+# 'broadcast' ⁠:⁠ results will be broadcast to the original shape of the DataFrame, 
+# the original index and columns will be retained.
+# The default behaviour (None) depends on the return value of the applied function: 
+# list-like results will be returned as a Series of those. 
+# However if the apply function returns a Series these are expanded to columns.
+print(df["price"].apply(lambda x: x-10))
+
+print("**********************")
+print("**********************")
+# Assign new columns to a DataFrame.
+# Returns a new object with all original columns in addition to new ones.
+# Existing columns that are re-assigned will be overwritten.
+new_df = df.assign(discountd_price=lambda x : x['price'] - (0.5 * x['price']))
+print(df.assign(discountd_price=lambda x : x['price'] - (0.5 * x['price'])))
+
+print("**********************")
+print("**********************")
+# To select all numeric types, use np.number or 'number'
+# To select strings you must use the object dtype, but note that this will return all object dtype columns
+# See the numpy dtype hierarchy
+# To select datetimes, use np.datetime64, 'datetime' or 'datetime64'
+# To select timedeltas, use np.timedelta64, 'timedelta' or 'timedelta64'
+# To select Pandas categorical dtypes, use 'category'
+# To select Pandas datetimetz dtypes, use 'datetimetz' (new in 0.20.0) or 'datetime64[ns, tz]'
+numeric_df = new_df.select_dtypes(include="number")
+print(numeric_df)
+
+
+print("**********************")
+print("**********************")
+
+for row in df.itertuples():
+    print(row.category)
+
+
+print("**********************")
+print("**********************")
+# DataFrame.max : Return the maximum over DataFrame axis.
+
+# DataFrame.cummax : Return cumulative maximum over DataFrame axis.
+
+# DataFrame.cummin : Return cumulative minimum over DataFrame axis.
+
+# DataFrame.cumsum : Return cumulative sum over DataFrame axis.
+
+# DataFrame.cumprod : Return cumulative product over DataFrame axis.
+print(df['price'].cummax())
+
+
+
+
+
+print("**********************")
+print("**********************")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################BroadCasting##################################################################
+
+# other : scalar, sequence, Series, dict or DataFrame
+# Any single or multiple element data structure, or list-like object.
+
+# axis : {0 or 'index', 1 or 'columns'}
+# Whether to compare by the index (0 or 'index') or columns. (1 or 'columns'). 
+# For Series input, axis to match Series index on.
+
+# level : int or label
+# Broadcast across a level, matching Index values on the passed MultiIndex level.
+
+# fill_value : float or None, default None
+# Fill existing missing (NaN) values, and any new element needed for successful DataFrame alignment, 
+# with this value before computation. 
+# If data in both corresponding DataFrame locations is missing the result will be missing.
+# print(df.add)
+
 

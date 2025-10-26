@@ -47,7 +47,7 @@ df_time["Quarter"] = df_time["Date"].dt.quarter
 # Sort by date
 df_time = df_time.sort_values("Date").reset_index(drop=True)
 
-print(df_time.head(10))
+
 
 # Total daily revenue
 
@@ -109,6 +109,9 @@ async def main():
     print(result)
 
 asyncio.run(main())
+
+# print(df_time.head(10))
+print(df_time['Unit_Price'])
 
 
 

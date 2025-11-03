@@ -1,0 +1,17 @@
+what is head?
+
+It's the entry point — the only node you directly keep track of.
+From the head, you can reach every other node by following .next
+
+
+does head have to be the at the beginning of the ll always?
+
+yes.
+
+A linked list is not like an array.
+In an array, you can access any element by index.
+In a linked list, you can only get to elements by starting from the first node and following .next links.
+you should create a temporary pointer, not move the head.
+
+so when when you are using traversing you are using the temporary pointer
+
